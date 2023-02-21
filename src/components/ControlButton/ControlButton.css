@@ -1,4 +1,4 @@
-.tray-button {
+.control-button {
   width: 44px;
   height: 44px;
   border: none;
@@ -6,15 +6,15 @@
   margin: 0 5px;
 }
 
-.tray-button:disabled {
+.control-button:disabled {
   opacity: 33%;
 }
 
-.tray-button:enabled {
+.control-button:enabled {
   cursor: pointer;
 }
 
 /* Acts as the first button in a new "group" of buttons separated from those to the left of it */
-.tray-button.new-group {
+.control-button.new-group {
   margin-left: auto;
 }

@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useCallback, createContext } from "react";
 import DailyIframe from "@daily-co/daily-js";
-import Call from "./components/Call/Call";
-import StartButton from "./components/StartButton/StartButton";
-import Tray from "./components/Tray/Tray";
-import api from "./api";
+import CallView from "./CallView";
+import WaitingRoomView from "./WaitingRoomView";
 import { pageUrlFromRoomUrl, roomUrlFromPageUrl } from "./utils/url-utils";
 import { logDailyEvent } from "./utils/log-utils";
 
 // Call states
 const STATE_IDLE = "STATE_IDLE";
-const STATE_CREATING = "STATE_CREATING";
 const STATE_JOINING = "STATE_JOINING";
 const STATE_JOINED = "STATE_JOINED";
 const STATE_LEAVING = "STATE_LEAVING";
@@ -21,19 +18,6 @@ export default function App() {
   const [callState, setCallState] = useState(STATE_IDLE); // call state
   const [roomUrl, setRoomUrl] = useState(null); // room URL
   const [callObject, setCallObject] = useState(null); // call object
-
-  // Handles creating a call
-  const createCall = useCallback(() => {
-    setCallState(STATE_CREATING);
-    return api
-      .createRoom()
-      .then((room) => room.url)
-      .catch((error) => {
-        console.log("Error creating room", error);
-        setRoomUrl(null);
-        setCallState(STATE_IDLE);
-      });
-  }, []);
 
   // Handles joining a call
   const startJoiningCall = useCallback((url) => {
@@ -147,26 +131,19 @@ export default function App() {
   return (
     <div className="app">
       {showCall ? (
-        // NOTE: for an app this size, it's not obvious that using a Context
-        // is the best choice. But for larger apps with deeply-nested components
-        // that want to access call object state and bind event listeners to the
-        // call object, this can be a helpful pattern.
-        <CallObjectContext.Provider value={callObject}>
-          <Call roomUrl={roomUrl} />
-          <Tray
-            disabled={!enableCallButtons}
-            onClickLeaveCall={startLeavingCall}
-          />
-        </CallObjectContext.Provider>
+        <CallView
+          callObject={callObject}
+          roomUrl={roomUrl}
+          enableCallButtons={enableCallButtons}
+          startLeavingCall={startLeavingCall}
+        />
       ) : (
-        <div className="w-screen h-screen bg-green-200 flex justify-center items-center">
-          <StartButton
-            disabled={!enableStartButton}
-            onClick={() => {
-              createCall().then((url) => startJoiningCall(url));
-            }}
-          />
-        </div>
+        <WaitingRoomView
+          enableStartButton={enableStartButton}
+          startJoiningCall={startJoiningCall}
+          setCallState={setCallState}
+          setRoomUrl={setRoomUrl}
+        />
       )}
     </div>
   );

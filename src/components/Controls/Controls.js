@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import "./Tray.css";
-import TrayButton, {
+import "./Controls.css";
+import ControlButton, {
   TYPE_MUTE_CAMERA,
   TYPE_MUTE_MIC,
   TYPE_SCREEN,
   TYPE_LEAVE,
   TYPE_CHAT,
-} from "../TrayButton/TrayButton";
+} from "../ControlButton/ControlButton";
 import Chat from "../Chat/Chat";
 import { CallObjectContext } from "../../App";
 import { logDailyEvent } from "../../utils/log-utils";
@@ -39,7 +39,7 @@ function getStreamStates(callObject) {
  * - onClickLeaveCall: () => ()
  * - disabled: boolean
  */
-export default function Tray(props) {
+export default function Controls(props) {
   const callObject = useContext(CallObjectContext);
   const [isCameraMuted, setCameraMuted] = useState(false);
   const [isMicMuted, setMicMuted] = useState(false);
@@ -105,35 +105,36 @@ export default function Tray(props) {
   }, [callObject]);
 
   return (
-    <div className="tray">
-      <TrayButton
+    // <div className="tray">
+    <div className="bg-blue-400">
+      <ControlButton
         type={TYPE_MUTE_CAMERA}
         disabled={props.disabled}
         highlighted={isCameraMuted}
         onClick={toggleCamera}
       />
-      <TrayButton
+      <ControlButton
         type={TYPE_MUTE_MIC}
         disabled={props.disabled}
         highlighted={isMicMuted}
         onClick={toggleMic}
       />
       {DailyIframe.supportedBrowser().supportsScreenShare && (
-        <TrayButton
+        <ControlButton
           type={TYPE_SCREEN}
           disabled={props.disabled}
           highlighted={isSharingScreen}
           onClick={toggleSharingScreen}
         />
       )}
-      <TrayButton
+      <ControlButton
         type={TYPE_CHAT}
         disabled={props.disabled}
         highlighted={highlightedChat}
         onClick={toggleChat}
       />
       <Chat onClickDisplay={displayChat} notification={handleNewChat} />
-      <TrayButton
+      <ControlButton
         type={TYPE_LEAVE}
         disabled={props.disabled}
         newButtonGroup={true}
